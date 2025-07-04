@@ -1,0 +1,7 @@
+cpu usage 75%
+disk usage 60%
+Test log from syslog-ng
+cpu usage 75%
+cpu=75 memory=45 disk=60
+cpu=80 memory=50 disk=65
+cpu=70 memory=42 disk=59
