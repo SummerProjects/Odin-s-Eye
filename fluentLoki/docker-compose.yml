@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - loki
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+  
+  fluentbit:
+    build:
+      context: ./fluentbit
+    container_name: fluentbit
+    depends_on:
+      - loki
+    ports:
+      - "5140:5140/udp"
+    networks:
+      - default
+
+volumes:
+  grafana-storage:
+
+networks:
+  default:
+    driver: bridge
