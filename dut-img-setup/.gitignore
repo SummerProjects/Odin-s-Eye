@@ -1,0 +1,10 @@
+*.log
+*.tmp
+*.bak
+*.tar
+*.gz
+*.zip
+__pycache__/
+*.db
+*.sqlite
+.DS_Store
