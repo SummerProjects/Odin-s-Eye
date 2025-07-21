@@ -1,0 +1,39 @@
+version: '3.7'
+
+services:
+  elasticsearch:
+    build: ./elasticsearch
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - network.host=0.0.0.0
+    ports:
+      - "9200:9200"
+    networks:
+      - logging
+
+  syslogng:
+    build: ./syslogng
+    container_name: syslogng
+    depends_on:
+      - elasticsearch
+    ports:
+      - "514:514/udp"
+      - "601:601"
+    networks:
+      - logging
+
+  grafana:
+    build: ./grafana
+    container_name: grafana
+    depends_on:
+      - elasticsearch
+    ports:
+      - "3000:3000"
+    networks:
+      - logging
+
+networks:
+  logging:
+    driver: bridge
+
