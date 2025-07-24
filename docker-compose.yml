@@ -1,0 +1,54 @@
+version: "3.8"
+
+services:
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - loki
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+
+  fluentbit:
+    build:
+      context: ./fluentbit
+    container_name: fluentbit
+    depends_on:
+      - loki
+    ports:
+      - "5140:5140/udp"
+    volumes:
+      # Mount container logs directory for tail input
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+
+      # Mount /var/log for DB file used by Fluent Bit tail input
+      - /var/log:/var/log
+
+      # Mount Fluent Bit config and parser files
+      - ./fluentbit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
+      - ./fluentbit/parsers.conf:/fluent-bit/etc/parsers.conf
+
+    networks:
+      - default
+    user: root
+
+volumes:
+  grafana-storage:
+
+networks:
+  default:
+    driver: bridge
