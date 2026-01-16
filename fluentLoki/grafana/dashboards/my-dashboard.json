@@ -1,0 +1,90 @@
+{
+  "id": 1,
+  "type": "bargauge",
+  "title": "New panel",
+  "gridPos": {
+    "x": 0,
+    "y": 0,
+    "h": 8,
+    "w": 12
+  },
+  "fieldConfig": {
+    "defaults": {
+      "mappings": [],
+      "thresholds": {
+        "mode": "absolute",
+        "steps": [
+          {
+            "color": "green",
+            "value": null
+          },
+          {
+            "color": "red",
+            "value": 80
+          }
+        ]
+      },
+      "color": {
+        "mode": "thresholds"
+      }
+    },
+    "overrides": []
+  },
+  "transformations": [
+    {
+      "id": "extractFields",
+      "options": {
+        "delimiter": ",",
+        "keepTime": true,
+        "replace": true,
+        "source": "Line"
+      }
+    },
+    {
+      "id": "calculateField",
+      "options": {}
+    }
+  ],
+  "pluginVersion": "12.0.2",
+  "targets": [
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "cer4ea0ozql1ca"
+      },
+      "direction": "backward",
+      "editorMode": "code",
+      "expr": "{job=\"fluentbit\" , source_type=\"metric\"}\n| json",
+      "queryType": "range",
+      "refId": "A"
+    }
+  ],
+  "datasource": {
+    "type": "loki",
+    "uid": "cer4ea0ozql1ca"
+  },
+  "options": {
+    "reduceOptions": {
+      "values": false,
+      "calcs": [
+        "lastNotNull"
+      ],
+      "fields": ""
+    },
+    "orientation": "auto",
+    "legend": {
+      "showLegend": false,
+      "displayMode": "list",
+      "placement": "bottom",
+      "calcs": []
+    },
+    "displayMode": "gradient",
+    "valueMode": "color",
+    "namePlacement": "auto",
+    "showUnfilled": true,
+    "sizing": "auto",
+    "minVizWidth": 8,
+    "minVizHeight": 16,
+    "maxVizHeight": 300
+  }
+}
